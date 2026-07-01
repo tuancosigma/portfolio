@@ -1,8 +1,54 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const words = ["detection", "triage", "investigation", "response"];
+
+function MagneticButton({
+  href,
+  children,
+  variant = "primary",
+}: {
+  href: string;
+  children: React.ReactNode;
+  variant?: "primary" | "outline";
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [hovered, setHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPos({
+      x: (e.clientX - rect.left - rect.width / 2) * 0.25,
+      y: (e.clientY - rect.top - rect.height / 2) * 0.25,
+    });
+  };
+
+  return (
+    <Link
+      ref={ref}
+      href={href}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => {
+        setHovered(false);
+        setPos({ x: 0, y: 0 });
+      }}
+      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+      className={`group inline-flex items-center gap-2 px-7 h-14 rounded-full text-base font-medium transition-[background-color,color,transform] duration-200 ease-out ${
+        variant === "primary"
+          ? "bg-white text-black hover:bg-white/90"
+          : "border border-white/25 text-white hover:bg-white/10"
+      }`}
+    >
+      {children}
+      <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${hovered ? "translate-x-1" : ""}`} />
+    </Link>
+  );
+}
 
 function BlurWord({ word, trigger }: { word: string; trigger: number }) {
   const letters = word.split("");
@@ -193,6 +239,20 @@ export function HeroSection() {
               </span>
             </span>
           </h1>
+        </div>
+
+        {/* CTA buttons */}
+        <div
+          className={`flex flex-wrap items-center gap-4 transition-all duration-1000 delay-300 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <MagneticButton href="/projects/barracuda" variant="primary">
+            Xem dự án
+          </MagneticButton>
+          <MagneticButton href="#contact" variant="outline">
+            Liên hệ
+          </MagneticButton>
         </div>
         </div>
       </div>

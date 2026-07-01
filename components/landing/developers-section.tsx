@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 const features = [
   {
@@ -14,10 +16,12 @@ const features = [
   {
     title: "Barracuda WAF Security Lab",
     description: "DVWA behind WAF, simulated attacks, and Python SMTP alerting.",
+    href: "/projects/barracuda",
   },
   {
     title: "AI Threat Detection (Capstone)",
     description: "Unsupervised ML detecting brute-force & SQLi with Wazuh + pfSense telemetry.",
+    href: "/projects/ai-threat-detection",
   },
 ];
 
@@ -87,18 +91,34 @@ export function DevelopersSection() {
             I can support Tier 1 monitoring, first-pass alert validation, firewall/WAF evidence review, clear incident notes, and small Python scripts that make repetitive checks easier to repeat.
           </p>
           <div className="grid grid-cols-2 gap-6">
-            {features.map((feature, index) => (
-              <div
-                key={feature.title}
-                className={`transition-all duration-500 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`}
-                style={{ transitionDelay: `${index * 50 + 200}ms` }}
-              >
-                <h3 className="font-medium mb-1">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </div>
-            ))}
+            {features.map((feature, index) => {
+              const content = (
+                <>
+                  <h3 className="font-medium mb-1 inline-flex items-center gap-1.5">
+                    {feature.title}
+                    {feature.href && (
+                      <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    )}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </>
+              );
+
+              const className = `group transition-all duration-500 ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              } ${feature.href ? "hover:opacity-70" : ""}`;
+              const style = { transitionDelay: `${index * 50 + 200}ms` };
+
+              return feature.href ? (
+                <Link key={feature.title} href={feature.href} className={className} style={style}>
+                  {content}
+                </Link>
+              ) : (
+                <div key={feature.title} className={className} style={style}>
+                  {content}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

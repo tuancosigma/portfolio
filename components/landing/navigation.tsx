@@ -66,6 +66,13 @@ export function Navigation() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
+              className={`hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-md text-xs font-mono transition-all duration-500 ${isScrolled ? "border-foreground/15 text-foreground/50 hover:text-foreground" : "border-white/20 text-white/50 hover:text-white"}`}
+              aria-label="Open command palette"
+            >
+              <span>⌘</span>K
+            </button>
             <a href="https://www.linkedin.com/in/tuan-pham-8abb3a335/" target="_blank" rel="noopener noreferrer" className={`transition-all duration-500 ${isScrolled ? "text-xs text-foreground/70 hover:text-foreground" : "text-sm text-white/70 hover:text-white"}`}>
               LinkedIn
             </a>

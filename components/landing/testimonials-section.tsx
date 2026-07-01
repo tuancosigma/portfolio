@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 const testimonials = [
   {
@@ -10,6 +11,9 @@ const testimonials = [
     role: "Portfolio proof",
     company: "Case Studies",
     metric: { value: "3", label: "Documented case studies" },
+    href: "/projects/barracuda",
+    cta: "Read case studies",
+    external: false,
   },
   {
     quote: "A sample analyst-style handoff report showing how alerts can be summarized for escalation or shift handover.",
@@ -17,6 +21,9 @@ const testimonials = [
     role: "SOC documentation",
     company: "Report Sample",
     metric: { value: "1", label: "Analyst-style handoff report" },
+    href: "/incident-report",
+    cta: "View report",
+    external: false,
   },
   {
     quote: "Source repository for the unsupervised detection project, useful for reviewing implementation and technical direction.",
@@ -24,6 +31,9 @@ const testimonials = [
     role: "GitHub evidence",
     company: "GitHub",
     metric: { value: "Open", label: "Source available" },
+    href: "https://github.com/TuanSOC/ProJect-AI-Unsupervised",
+    cta: "View source",
+    external: true,
   },
 ];
 
@@ -152,6 +162,26 @@ export function TestimonialsSection() {
                   </p>
                 </div>
               </div>
+
+              {activeTestimonial.external ? (
+                <a
+                  href={activeTestimonial.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group mt-8 inline-flex items-center gap-2 text-sm font-mono text-background/60 hover:text-background transition-colors"
+                >
+                  {activeTestimonial.cta}
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </a>
+              ) : (
+                <Link
+                  href={activeTestimonial.href}
+                  className="group mt-8 inline-flex items-center gap-2 text-sm font-mono text-background/60 hover:text-background transition-colors"
+                >
+                  {activeTestimonial.cta}
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </Link>
+              )}
             </div>
           </div>
 
