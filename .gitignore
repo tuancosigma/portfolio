@@ -19,3 +19,8 @@ node_modules
 .codegraph/
 .claude/
 tsconfig.tsbuildinfo
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
+.dev.vars
