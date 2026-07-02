@@ -95,6 +95,14 @@ export function SecuritySection() {
           <div className={`lg:col-span-7 relative p-8 lg:p-12 border border-foreground/10 min-h-[400px] overflow-hidden transition-all duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}>
+            {/* Static shield emblem behind the rotating feature images */}
+            <img
+              src="/images/shield.png"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              className="absolute -right-10 -bottom-10 w-2/3 max-w-[420px] object-contain opacity-[0.07] pointer-events-none select-none"
+            />
             {/* Dynamic feature image with cross-fade — desktop only */}
             <div className="absolute inset-0 pointer-events-none items-center justify-end hidden lg:flex">
               {securityFeatures.map((feature, index) => (

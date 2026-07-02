@@ -37,7 +37,18 @@ export default function IncidentReportPage() {
       <Navigation />
 
       <section className="relative pt-40 pb-24 lg:pt-48 lg:pb-32 bg-[oklch(0.09_0.01_260)] text-white overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+        {/* Terminal artwork — right side, fades under the text */}
+        <div className="absolute inset-y-0 right-0 w-full lg:w-[60%] pointer-events-none">
+          <img
+            src="/images/report-terminal.svg"
+            alt="Terminal window streaming security log lines with alert highlights"
+            className="w-full h-full object-cover object-center opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.09_0.01_260)] via-[oklch(0.09_0.01_260)]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.09_0.01_260)] via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
           <Link
             href="/#proof"
             className="inline-flex items-center gap-2 text-sm font-mono text-white/50 hover:text-white transition-colors mb-10"

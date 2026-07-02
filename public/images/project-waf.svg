@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="glow" cx="62%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#eca8d6" stop-opacity="0.22"/>
+      <stop offset="45%" stop-color="#eca8d6" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#eca8d6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="packet" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#ef4444" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#fca5a5" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="1.6"/></filter>
+    <!-- pointy-top hexagon, r=46 -->
+    <polygon id="hex" points="0,-46 40,-23 40,23 0,46 -40,23 -40,-23" fill="none"/>
+  </defs>
+
+  <rect width="1200" height="675" fill="#0a0a0a"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+
+  <!-- incoming attack packet streams, stopped at the shield wall x≈700 -->
+  <g filter="url(#blur2)">
+    <rect x="40"  y="132" width="640" height="3.5" rx="2" fill="url(#packet)"/>
+    <rect x="-60" y="236" width="740" height="3"   rx="2" fill="url(#packet)" opacity="0.8"/>
+    <rect x="90"  y="330" width="590" height="4"   rx="2" fill="url(#packet)"/>
+    <rect x="-20" y="425" width="700" height="3"   rx="2" fill="url(#packet)" opacity="0.7"/>
+    <rect x="60"  y="520" width="620" height="3.5" rx="2" fill="url(#packet)" opacity="0.9"/>
+  </g>
+  <!-- impact sparks where packets hit the wall -->
+  <g fill="#fca5a5" filter="url(#blur6)">
+    <circle cx="688" cy="134" r="9"/>
+    <circle cx="688" cy="332" r="11"/>
+    <circle cx="688" cy="522" r="8"/>
+  </g>
+
+  <!-- hexagonal shield wall -->
+  <g stroke="#eca8d6">
+    <g stroke-opacity="0.9" stroke-width="2">
+      <use xlink:href="#hex" x="740" y="107"/>
+      <use xlink:href="#hex" x="740" y="245"/>
+      <use xlink:href="#hex" x="740" y="383"/>
+      <use xlink:href="#hex" x="740" y="521"/>
+    </g>
+    <g stroke-opacity="0.5" stroke-width="1.5">
+      <use xlink:href="#hex" x="810" y="38"/>
+      <use xlink:href="#hex" x="810" y="176"/>
+      <use xlink:href="#hex" x="810" y="314"/>
+      <use xlink:href="#hex" x="810" y="452"/>
+      <use xlink:href="#hex" x="810" y="590"/>
+    </g>
+    <g stroke-opacity="0.28" stroke-width="1.2">
+      <use xlink:href="#hex" x="880" y="107"/>
+      <use xlink:href="#hex" x="880" y="245"/>
+      <use xlink:href="#hex" x="880" y="383"/>
+      <use xlink:href="#hex" x="880" y="521"/>
+    </g>
+    <g stroke-opacity="0.14" stroke-width="1">
+      <use xlink:href="#hex" x="950" y="38"/>
+      <use xlink:href="#hex" x="950" y="176"/>
+      <use xlink:href="#hex" x="950" y="314"/>
+      <use xlink:href="#hex" x="950" y="452"/>
+      <use xlink:href="#hex" x="950" y="590"/>
+      <use xlink:href="#hex" x="1020" y="107"/>
+      <use xlink:href="#hex" x="1020" y="245"/>
+      <use xlink:href="#hex" x="1020" y="383"/>
+      <use xlink:href="#hex" x="1020" y="521"/>
+    </g>
+  </g>
+
+  <!-- glow behind the front shield column -->
+  <rect x="695" y="0" width="90" height="675" fill="#eca8d6" opacity="0.06" filter="url(#blur6)"/>
+
+  <!-- clean traffic passing through, pink = allowed -->
+  <g filter="url(#blur2)" opacity="0.85">
+    <rect x="785" y="200" width="415" height="2.5" rx="1" fill="#eca8d6" opacity="0.55"/>
+    <rect x="785" y="383" width="415" height="2.5" rx="1" fill="#eca8d6" opacity="0.4"/>
+  </g>
+
+  <!-- faint grid texture -->
+  <g stroke="#ffffff" stroke-opacity="0.03">
+    <path d="M0 168h1200M0 337h1200M0 506h1200"/>
+    <path d="M200 0v675M400 0v675M600 0v675M800 0v675M1000 0v675"/>
+  </g>
+</svg>

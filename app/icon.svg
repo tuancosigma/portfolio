@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0a0a0a"/>
+  <text x="30" y="43" font-family="'JetBrains Mono','Geist Mono',Consolas,monospace" font-size="30" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="-2">TP</text>
+  <rect x="47" y="36" width="7" height="10" fill="#eca8d6">
+    <animate attributeName="opacity" values="1;1;0;0;1" dur="1.6s" repeatCount="indefinite"/>
+  </rect>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.12"/>
+      <stop offset="55%" stop-color="#eca8d6" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#eca8d6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="anomaly" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#eca8d6" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#eca8d6" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#eca8d6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+
+  <rect width="1200" height="675" fill="#0a0a0a"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+
+  <!-- edges: normal cluster (dim white), anomaly links (pink) -->
+  <g stroke="#ffffff" stroke-opacity="0.1" stroke-width="1">
+    <path d="M240 210 L410 150 M240 210 L385 300 M410 150 L560 230 M385 300 L560 230 M385 300 L330 440 M560 230 L620 380 M330 440 L620 380 M620 380 L520 520 M330 440 L520 520 M410 150 L620 380 M240 210 L330 440"/>
+    <path d="M560 230 L760 180 M760 180 L890 290 M620 380 L890 290 M890 290 L960 440 M620 380 L960 440 M520 520 L790 560 M960 440 L790 560 M760 180 L960 130"/>
+  </g>
+  <g stroke="#eca8d6" stroke-opacity="0.55" stroke-width="1.5" filter="url(#blur3)">
+    <path d="M960 130 L1040 250 M890 290 L1040 250 M1040 250 L960 440"/>
+  </g>
+
+  <!-- normal nodes -->
+  <g fill="#ffffff">
+    <circle cx="240" cy="210" r="5" opacity="0.5"/>
+    <circle cx="410" cy="150" r="6" opacity="0.6"/>
+    <circle cx="385" cy="300" r="5" opacity="0.45"/>
+    <circle cx="560" cy="230" r="7" opacity="0.65"/>
+    <circle cx="330" cy="440" r="5" opacity="0.4"/>
+    <circle cx="620" cy="380" r="8" opacity="0.7"/>
+    <circle cx="520" cy="520" r="5" opacity="0.45"/>
+    <circle cx="760" cy="180" r="6" opacity="0.55"/>
+    <circle cx="890" cy="290" r="6" opacity="0.6"/>
+    <circle cx="960" cy="440" r="5" opacity="0.5"/>
+    <circle cx="790" cy="560" r="4" opacity="0.35"/>
+    <circle cx="960" cy="130" r="5" opacity="0.5"/>
+  </g>
+
+  <!-- the anomaly: bright pink outlier node -->
+  <circle cx="1040" cy="250" r="90" fill="url(#anomaly)"/>
+  <circle cx="1040" cy="250" r="11" fill="#eca8d6"/>
+  <circle cx="1040" cy="250" r="24" fill="none" stroke="#eca8d6" stroke-opacity="0.5" stroke-width="1.5"/>
+  <circle cx="1040" cy="250" r="42" fill="none" stroke="#eca8d6" stroke-opacity="0.2" stroke-width="1"/>
+
+  <!-- anomaly score sparkline along the bottom -->
+  <g filter="url(#blur3)">
+    <path d="M60 610 L180 605 L300 612 L420 604 L540 611 L660 606 L780 610 L860 560 L940 480 L1040 430 L1140 465"
+          fill="none" stroke="#eca8d6" stroke-opacity="0.5" stroke-width="2"/>
+  </g>
+  <path d="M60 610 L180 605 L300 612 L420 604 L540 611 L660 606 L780 610 L860 560 L940 480 L1040 430 L1140 465"
+        fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1"/>
+
+  <!-- faint grid -->
+  <g stroke="#ffffff" stroke-opacity="0.03">
+    <path d="M0 168h1200M0 337h1200M0 506h1200"/>
+    <path d="M240 0v675M480 0v675M720 0v675M960 0v675"/>
+  </g>
+</svg>

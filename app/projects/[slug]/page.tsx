@@ -38,7 +38,18 @@ export default async function ProjectPage({
       <Navigation />
 
       <section className="relative pt-40 pb-24 lg:pt-48 lg:pb-32 bg-foreground text-background overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+        {/* Project artwork — right side, fades under the text */}
+        <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] pointer-events-none">
+          <img
+            src={project.image}
+            alt={project.imageAlt}
+            className="w-full h-full object-cover object-center opacity-70"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
           <Link
             href="/#developers"
             className="inline-flex items-center gap-2 text-sm font-mono text-background/50 hover:text-background transition-colors mb-10"

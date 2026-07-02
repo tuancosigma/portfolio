@@ -93,6 +93,14 @@ export function TestimonialsSection() {
 
   return (
     <section id="proof" ref={sectionRef} className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
+      {/* Telemetry artwork underlay */}
+      <img
+        src="/images/proof-evidence.svg"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover opacity-[0.35] pointer-events-none"
+      />
       {/* ASCII background pattern */}
       <div className="absolute inset-0 font-mono text-[10px] text-background/[0.02] leading-tight overflow-hidden whitespace-pre select-none">
         {asciiPattern}
