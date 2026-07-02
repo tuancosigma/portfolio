@@ -46,8 +46,8 @@ export function DevelopersSection() {
 
       {/* Image — absolute, bottom-right, behind all content */}
       <div
-        className={`absolute bottom-0 right-0 w-[55%] h-[85%] pointer-events-none transition-all duration-1000 delay-300 ${
-          isVisible ? "opacity-100" : "opacity-0"
+        className={`absolute bottom-0 right-0 w-[55%] h-[85%] pointer-events-none transition-all duration-1000 delay-300 opacity-20 ${
+          isVisible ? "lg:opacity-100" : "lg:opacity-0"
         }`}
       >
         <img
@@ -83,7 +83,7 @@ export function DevelopersSection() {
 
         {/* Description + Features — left half only */}
         <div
-          className={`max-w-[50%] transition-all duration-700 delay-100 ${
+          className={`max-w-full lg:max-w-[50%] transition-all duration-700 delay-100 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >

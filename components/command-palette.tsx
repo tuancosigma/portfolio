@@ -13,6 +13,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import {
+  User,
   Cpu,
   Shield,
   Code,
@@ -61,11 +62,14 @@ export function CommandPalette() {
   );
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} title="Command Palette" description="Điều hướng nhanh trên portfolio">
-      <CommandInput placeholder="Tìm section, dự án, hoặc hành động..." />
+    <CommandDialog open={open} onOpenChange={setOpen} title="Command Palette" description="Quick navigation across the portfolio">
+      <CommandInput placeholder="Search sections, projects, or actions..." />
       <CommandList>
-        <CommandEmpty>Không tìm thấy kết quả.</CommandEmpty>
-        <CommandGroup heading="Điều hướng">
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Navigation">
+          <CommandItem onSelect={() => go("/#about")}>
+            <User /> About
+          </CommandItem>
           <CommandItem onSelect={() => go("/#features")}>
             <Cpu /> Skills
           </CommandItem>
@@ -74,6 +78,9 @@ export function CommandPalette() {
           </CommandItem>
           <CommandItem onSelect={() => go("/#infra")}>
             <Shield /> Lab Stack
+          </CommandItem>
+          <CommandItem onSelect={() => go("/#integrations")}>
+            <Cpu /> Tools
           </CommandItem>
           <CommandItem onSelect={() => go("/#developers")}>
             <Briefcase /> Experience &amp; Projects
@@ -92,7 +99,7 @@ export function CommandPalette() {
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Dự án">
+        <CommandGroup heading="Projects">
           <CommandItem onSelect={() => go("/projects/barracuda")}>
             <FolderGit2 /> Barracuda WAF Security Lab
           </CommandItem>
@@ -107,7 +114,7 @@ export function CommandPalette() {
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Liên hệ">
+        <CommandGroup heading="Contact">
           <CommandItem onSelect={() => go("mailto:tinyly90891@gmail.com")}>
             <Mail /> Email me
             <CommandShortcut>tinyly90891@gmail.com</CommandShortcut>

@@ -231,8 +231,8 @@ export function HeroSection() {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            <span className="block whitespace-nowrap">Blue Team mindset,</span>
-            <span className="block whitespace-nowrap">
+            <span className="block whitespace-normal sm:whitespace-nowrap">Blue Team mindset,</span>
+            <span className="block whitespace-normal sm:whitespace-nowrap">
               log-driven{" "}
               <span className="relative inline-block">
                 <BlurWord word={words[wordIndex]} trigger={wordIndex} />
@@ -248,10 +248,10 @@ export function HeroSection() {
           }`}
         >
           <MagneticButton href="/projects/barracuda" variant="primary">
-            Xem dự án
+            View projects
           </MagneticButton>
           <MagneticButton href="#contact" variant="outline">
-            Liên hệ
+            Get in touch
           </MagneticButton>
         </div>
         </div>

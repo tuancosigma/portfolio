@@ -67,7 +67,7 @@ export function IntegrationsSection() {
   return (
     <section id="integrations" ref={sectionRef} className="relative overflow-hidden">
 
-      {/* Header — centré verticalement sur l'image */}
+      {/* Header — vertically centered over the image */}
       <div className="relative z-10 pt-32 lg:pt-40 text-center">
         <span className={`inline-flex items-center gap-4 text-sm font-mono text-muted-foreground mb-8 transition-all duration-700 justify-center ${
           isVisible ? "opacity-100" : "opacity-0"
@@ -104,7 +104,7 @@ export function IntegrationsSection() {
         />
       </div>
 
-      {/* Integration grid — remonte sur l'image avec spacing mobile approprié */}
+      {/* Integration grid — overlaps the image with proper mobile spacing */}
       <div className="relative z-10 mt-0 lg:-mt-24 max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-16">
           {integrations.map((integration, index) => (

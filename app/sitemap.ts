@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { projects } from "@/lib/projects-data";
 
-const BASE_URL = "https://tuanpham-portfolio.tuancosigma.workers.dev";
+const BASE_URL = "https://portfolio.tinyly90891.workers.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [

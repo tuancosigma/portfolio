@@ -54,7 +54,7 @@ export default function IncidentReportPage() {
             className="inline-flex items-center gap-2 text-sm font-mono text-white/50 hover:text-white transition-colors mb-10"
           >
             <ArrowLeft className="w-4 h-4" />
-            Về trang chủ
+            Back to home
           </Link>
 
           <span className="inline-flex items-center gap-3 text-sm font-mono text-white/40 mb-6">

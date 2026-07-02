@@ -1,7 +1,6 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import { CommandPalette } from '@/components/command-palette'
 import { ScrollProgress } from '@/components/landing/scroll-progress'
 import './globals.css'
@@ -23,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tuanpham-portfolio.tuancosigma.workers.dev'),
+  metadataBase: new URL('https://portfolio.tinyly90891.workers.dev'),
   title: 'Pham Minh Tuan — SOC / Blue Team Security Engineer',
   description: 'Blue Team mindset, log-driven detection. SOC Tier 1 candidate with hands-on experience in SIEM monitoring, alert triage, firewall/WAF configuration, and log-driven investigation.',
   generator: 'v0.app',
@@ -34,7 +33,7 @@ const personJsonLd = {
   "@type": "Person",
   name: "Pham Minh Tuan",
   jobTitle: "Security Engineer Fresher — SOC / Blue Team",
-  url: "https://tuanpham-portfolio.tuancosigma.workers.dev",
+  url: "https://portfolio.tinyly90891.workers.dev",
   email: "mailto:tinyly90891@gmail.com",
   sameAs: [
     "https://github.com/TuanSOC",
@@ -59,7 +58,6 @@ export default function RootLayout({
         <ScrollProgress />
         {children}
         <CommandPalette />
-        <Analytics />
       </body>
     </html>
   )

@@ -35,7 +35,7 @@ export function InfrastructureSection() {
 
   return (
     <section id="infra" ref={sectionRef} className="relative py-32 lg:py-40 overflow-hidden">
-        {/* Background accent — retiré, remplacé par l'image sphère */}
+        {/* Background accent replaced by the sphere image */}
       
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         {/* Header */}
@@ -59,7 +59,7 @@ export function InfrastructureSection() {
               />
             </div>
 
-            {/* Titre + description empilés */}
+            {/* Title + description stacked */}
             <div className="flex flex-col justify-center">
               <h2 className={`text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9] transition-all duration-1000 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
