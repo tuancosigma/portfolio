@@ -6,6 +6,8 @@ export interface Project {
   meta: string;
   image: string;
   imageAlt: string;
+  photo: string;
+  depthMap: string;
   signal: string;
   environment: string;
   outcome: string;
@@ -35,6 +37,8 @@ export const projects: Project[] = [
     title: "Barracuda WAF Security Lab",
     meta: "Feb 2025 – Apr 2025 • Individual Researcher",
     image: "/images/project-waf.svg",
+    photo: "/images/photo-waf.jpg",
+    depthMap: "/images/depth-waf.jpg",
     imageAlt: "Hexagonal firewall shield grid deflecting incoming attack traffic",
     signal: "Web attack telemetry",
     environment: "DVWA + Barracuda WAF + SMTP alerting",
@@ -74,6 +78,8 @@ export const projects: Project[] = [
     title: "AI-based Unsupervised Threat Detection",
     meta: "Jul 2025 – Sep 2025 • Research Developer (Capstone)",
     image: "/images/project-ml.svg",
+    photo: "/images/photo-ml.jpg",
+    depthMap: "/images/depth-ml.jpg",
     imageAlt: "Network graph of events with one glowing pink anomaly node",
     signal: "Authentication and SQLi anomalies",
     environment: "Wazuh + pfSense + Python ML pipeline",
@@ -114,6 +120,8 @@ export const projects: Project[] = [
     title: "Oracle SQL Database Security",
     meta: "Security Lab • On-Prem",
     image: "/images/project-db.svg",
+    photo: "/images/photo-db.jpg",
+    depthMap: "/images/depth-db.jpg",
     imageAlt: "Locked database cylinder rejecting unauthorized query attempts",
     signal: "Database access risk",
     environment: "Oracle SQL + auditing + injection test cases",

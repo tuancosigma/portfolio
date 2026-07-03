@@ -15,6 +15,7 @@ import {
   Box,
   Activity,
 } from "lucide-react";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const logos: Record<string, React.ReactNode> = {
   Wazuh: <ShieldAlert className="w-6 h-6" />,
@@ -47,55 +48,35 @@ const integrations = [
 ];
 
 export function IntegrationsSection() {
-  const [isVisible, setIsVisible] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef);
 
   return (
     <section id="integrations" ref={sectionRef} className="relative overflow-hidden">
 
       {/* Header — vertically centered over the image */}
       <div className="relative z-10 pt-32 lg:pt-40 text-center">
-        <span className={`inline-flex items-center gap-4 text-sm font-mono text-muted-foreground mb-8 transition-all duration-700 justify-center ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <span data-reveal className="inline-flex items-center gap-4 text-sm font-mono text-muted-foreground mb-8 justify-center">
           <span className="w-12 h-px bg-foreground/20" />
           Tools
           <span className="w-12 h-px bg-foreground/20" />
         </span>
 
-        <h2 className={`text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9] transition-all duration-1000 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}>
+        <h2 data-reveal className="text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9]">
           Tools I
           <br />
           <span className="text-muted-foreground">operate.</span>
         </h2>
 
-        <p className={`mt-8 text-xl text-muted-foreground leading-relaxed max-w-lg mx-auto transition-all duration-1000 delay-100 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <p data-reveal className="mt-8 text-xl text-muted-foreground leading-relaxed max-w-lg mx-auto">
           Hands-on with 12+ SIEM, network defense, and monitoring tools across SOC labs, internships, and coursework.
         </p>
       </div>
 
       {/* Full-width image */}
-      <div className={`relative left-1/2 -translate-x-1/2 w-screen -mt-16 transition-all duration-1000 delay-200 ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}>
+      <div data-reveal className="relative left-1/2 -translate-x-1/2 w-screen -mt-16">
         <img
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/connection-KeJwWPQvn6l0a7C48tCARYtNEdC92H.png"
           alt=""
@@ -110,14 +91,12 @@ export function IntegrationsSection() {
           {integrations.map((integration, index) => (
             <div
               key={integration.name}
+              data-reveal
               className={`group relative overflow-hidden p-6 lg:p-8 border transition-all duration-500 cursor-default ${
                 hoveredIndex === index
                   ? "border-foreground bg-foreground/[0.04] scale-[1.02]"
                   : "border-foreground/10 hover:border-foreground/30"
-              } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-              style={{
-                transitionDelay: `${index * 30 + 300}ms`,
-              }}
+              }`}
               onMouseEnter={(e) => {
                 setHoveredIndex(index);
                 const rect = e.currentTarget.getBoundingClientRect();
@@ -171,9 +150,7 @@ export function IntegrationsSection() {
         </div>
 
         {/* Bottom stats row */}
-        <div className={`flex flex-wrap items-center justify-between gap-8 pt-12 border-t border-foreground/10 transition-all duration-1000 delay-500 pb-32 lg:pb-40 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <div data-reveal className="flex flex-wrap items-center justify-between gap-8 pt-12 border-t border-foreground/10 pb-32 lg:pb-40">
           <div className="flex flex-wrap gap-12">
             {[
               { value: "12+", label: "Tools & platforms" },

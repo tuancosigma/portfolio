@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
+import { SplitReveal } from "@/components/motion/split-reveal";
 import { ArrowRight, Check, Zap } from "lucide-react";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const plans = [
   {
@@ -58,20 +60,8 @@ const plans = [
 
 export function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(true);
-  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef);
 
   return (
     <section id="pricing" ref={sectionRef} className="relative py-32 lg:py-40">
@@ -83,20 +73,16 @@ export function PricingSection() {
               <span className="w-12 h-px bg-foreground/30" />
               Certifications
             </span>
-            <h2 className={`text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9] transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}>
-              Verified
+            <h2 className="text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9]">
+              <SplitReveal>Verified</SplitReveal>
               <br />
-              <span className="text-stroke">credentials.</span>
+              <SplitReveal className="text-stroke" delay={0.1}>credentials.</SplitReveal>
             </h2>
           </div>
           
           <div className="lg:col-span-5 relative p-0 h-96 lg:h-auto">
             {/* Whale image */}
-            <div className={`absolute inset-0 pointer-events-none transition-all duration-1000 delay-100 ${
-              isVisible ? "opacity-100" : "opacity-0"
-            }`}>
+            <div data-reveal className="absolute inset-0 pointer-events-none">
               <img
                 src="/images/whale.png"
                 alt="Organic whale"
@@ -113,12 +99,12 @@ export function PricingSection() {
             {plans.map((plan, index) => (
               <div
                 key={plan.name}
-                className={`relative bg-background border transition-all duration-700 ${
-                  plan.highlight 
-                    ? "border-foreground lg:-mx-2 lg:z-10 lg:scale-105" 
+                data-reveal
+                className={`relative bg-background border ${
+                  plan.highlight
+                    ? "border-foreground lg:-mx-2 lg:z-10 lg:scale-105"
                     : "border-foreground/10 lg:first:-mr-2 lg:last:-ml-2"
-                } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
+                }`}
               >
                 {/* Popular badge */}
                 {plan.highlight && (
@@ -184,9 +170,7 @@ export function PricingSection() {
         </div>
 
         {/* Bottom note with icons */}
-        <div className={`mt-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 pt-12 border-t border-foreground/10 transition-all duration-1000 delay-500 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <div data-reveal className="mt-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 pt-12 border-t border-foreground/10">
           <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
               <Check className="w-4 h-4 text-[#eca8d6]" />

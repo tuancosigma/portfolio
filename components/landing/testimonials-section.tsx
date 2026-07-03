@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { DistortionBackground } from "@/components/motion/distortion-background";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const testimonials = [
   {
@@ -45,25 +47,13 @@ function generateAsciiPattern() {
 
 export function TestimonialsSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [asciiPattern, setAsciiPattern] = useState("");
   const sectionRef = useRef<HTMLElement>(null);
+  useSectionReveal(sectionRef);
 
   useEffect(() => {
     setAsciiPattern(generateAsciiPattern());
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -93,6 +83,8 @@ export function TestimonialsSection() {
 
   return (
     <section id="proof" ref={sectionRef} className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
+      {/* Living smoke layer — WebGL warp over the static artwork */}
+      <DistortionBackground src="/images/proof-distort.jpg" className="opacity-[0.22]" />
       {/* Telemetry artwork underlay */}
       <img
         src="/images/proof-evidence.svg"
@@ -114,9 +106,7 @@ export function TestimonialsSection() {
               <span className="w-12 h-px bg-background/20" />
               Proof
             </span>
-            <h2 className={`text-4xl lg:text-5xl font-display transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}>
+            <h2 data-reveal className="text-4xl lg:text-5xl font-display">
               Backed by
               <span className="text-background/40"> evidence.</span>
             </h2>

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import { CommandPalette } from '@/components/command-palette'
 import { ScrollProgress } from '@/components/landing/scroll-progress'
+import { SmoothScrollProvider } from '@/components/motion/smooth-scroll-provider'
 import './globals.css'
 
 const instrumentSans = Instrument_Sans({ 
@@ -55,9 +56,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        <ScrollProgress />
-        {children}
-        <CommandPalette />
+        <SmoothScrollProvider>
+          <ScrollProgress />
+          {children}
+          <CommandPalette />
+        </SmoothScrollProvider>
       </body>
     </html>
   )

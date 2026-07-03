@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { gsap } from "@/lib/gsap";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const steps = [
   {
@@ -38,26 +40,36 @@ verdict: escalate for correlation`,
 
 export function HowItWorksSection() {
   const [activeStep, setActiveStep] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const sectionRef = useRef<HTMLElement>(null);
+  const treeImageRef = useRef<HTMLImageElement>(null);
+  useSectionReveal(sectionRef);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % steps.length);
     }, 6000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Subtle scrub parallax on the tree illustration
+  useEffect(() => {
+    const img = treeImageRef.current;
+    const section = sectionRef.current;
+    if (!img || !section) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(img, {
+        yPercent: -8,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          scrub: true,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -73,16 +85,14 @@ export function HowItWorksSection() {
         <div className="relative mb-0 lg:mb-0 grid lg:grid-cols-2 gap-4 lg:gap-12 items-end">
           {/* Titre colonne gauche */}
           <div className="overflow-hidden pb-0 lg:pb-32">
-            <div className={`transition-all duration-1000 ${isVisible ? "translate-x-0 opacity-100" : "-translate-x-12 opacity-0"}`}>
+            <div data-reveal>
               <span className="inline-flex items-center gap-3 text-sm font-mono text-white/40 mb-8">
                 <span className="w-12 h-px bg-white/20" />
                 Workflow
               </span>
             </div>
 
-            <h2 className={`text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.85] transition-all duration-1000 delay-100 ${
-              isVisible ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0"
-            }`}>
+            <h2 data-reveal className="text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.85]">
               <span className="block">Collect.</span>
               <span className="block text-white/30">Triage.</span>
               <span className="block text-white/10">Investigate.</span>
@@ -90,10 +100,9 @@ export function HowItWorksSection() {
           </div>
 
           {/* Image cerisier — se colle en bas sur les blocs */}
-          <div className={`relative h-[320px] lg:h-[640px] overflow-hidden transition-all duration-1000 delay-200 ${
-            isVisible ? "opacity-100" : "opacity-0"
-          }`}>
+          <div data-reveal className="relative h-[320px] lg:h-[640px] overflow-hidden">
             <img
+              ref={treeImageRef}
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tree-uAia6REvB137CQyHFCf0za3O6h2zKO.png"
               alt=""
               aria-hidden="true"

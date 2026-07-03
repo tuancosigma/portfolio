@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SplitReveal } from "@/components/motion/split-reveal";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const features = [
   {
@@ -129,21 +131,9 @@ function ParticleVisualization() {
 }
 
 export function FeaturesSection() {
-  const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const sectionRef = useRef<HTMLElement>(null);
+  useSectionReveal(sectionRef);
 
   return (
     <section
@@ -160,20 +150,14 @@ export function FeaturesSection() {
                 <span className="w-12 h-px bg-foreground/30" />
                 Skills
               </span>
-              <h2
-                className={`text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9] transition-all duration-1000 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-              >
-                Security
+              <h2 className="text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9]">
+                <SplitReveal>Security</SplitReveal>
                 <br />
-                <span className="text-muted-foreground">skillset.</span>
+                <SplitReveal className="text-muted-foreground" delay={0.1}>skillset.</SplitReveal>
               </h2>
             </div>
             <div className="lg:col-span-5 lg:pb-4">
-              <p className={`text-xl text-muted-foreground leading-relaxed transition-all duration-1000 delay-200 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}>
+              <p data-reveal className="text-xl text-muted-foreground leading-relaxed">
                 Hands-on capability across SIEM monitoring, network defense, offensive/defensive tooling, and automation — built through labs, internships, and coursework.
               </p>
             </div>
@@ -183,10 +167,9 @@ export function FeaturesSection() {
         {/* Bento Grid Layout */}
         <div className="grid lg:grid-cols-12 gap-4 lg:gap-6">
           {/* Large feature card */}
-          <div 
-            className={`lg:col-span-12 relative bg-black border border-foreground/10 min-h-[500px] overflow-hidden group transition-all duration-700 flex ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-            }`}
+          <div
+            data-reveal
+            className="lg:col-span-12 relative bg-black border border-foreground/10 min-h-[500px] overflow-hidden group flex"
             onMouseEnter={() => setActiveFeature(0)}
           >
             {/* Left: text content */}

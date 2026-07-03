@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { SplitReveal } from "@/components/motion/split-reveal";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const regions = [
   { name: "SIEM & Detection", nodes: 6, status: "hands-on" },
@@ -10,21 +12,9 @@ const regions = [
 ];
 
 export function InfrastructureSection() {
-  const [isVisible, setIsVisible] = useState(false);
   const [activeRegion, setActiveRegion] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  useSectionReveal(sectionRef);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,18 +30,14 @@ export function InfrastructureSection() {
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         {/* Header */}
         <div className="mb-20">
-          <span className={`inline-flex items-center gap-4 text-sm font-mono text-muted-foreground mb-8 transition-all duration-700 ${
-            isVisible ? "opacity-100" : "opacity-0"
-          }`}>
+          <span data-reveal className="inline-flex items-center gap-4 text-sm font-mono text-muted-foreground mb-8">
             <span className="w-12 h-px bg-foreground/20" />
             Lab Stack
           </span>
-          
+
           <div className="grid lg:grid-cols-[auto_1fr] gap-8 lg:gap-16 items-stretch">
             {/* Image globe — colonne gauche, pleine hauteur */}
-            <div className={`w-48 lg:w-72 xl:w-80 shrink-0 transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}>
+            <div data-reveal className="w-48 lg:w-72 xl:w-80 shrink-0">
               <img
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/world-3i68QNWJwmO7W19ztZWbevAwJQHzYL.png"
                 alt="Global network sphere"
@@ -61,17 +47,13 @@ export function InfrastructureSection() {
 
             {/* Title + description stacked */}
             <div className="flex flex-col justify-center">
-              <h2 className={`text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9] transition-all duration-1000 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              }`}>
-                Lab-tested,
+              <h2 className="text-6xl md:text-7xl lg:text-[128px] font-display tracking-tight leading-[0.9]">
+                <SplitReveal>Lab-tested,</SplitReveal>
                 <br />
-                <span className="text-muted-foreground">not just theory.</span>
+                <SplitReveal className="text-muted-foreground" delay={0.1}>not just theory.</SplitReveal>
               </h2>
 
-              <p className={`mt-8 text-xl text-muted-foreground leading-relaxed max-w-lg transition-all duration-1000 delay-100 ${
-                isVisible ? "opacity-100" : "opacity-0"
-              }`}>
+              <p data-reveal className="mt-8 text-xl text-muted-foreground leading-relaxed max-w-lg">
                 Every skill here was tested in a hands-on lab across 4 domains.
                 SIEM detection, WAF tuning, infrastructure monitoring, and automation.
               </p>
@@ -82,9 +64,7 @@ export function InfrastructureSection() {
         {/* Main content grid */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Large stat card */}
-          <div className={`lg:col-span-2 relative p-8 lg:p-12 border border-foreground/10 bg-foreground/[0.02] overflow-hidden transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}>
+          <div data-reveal className="lg:col-span-2 relative p-8 lg:p-12 border border-foreground/10 bg-foreground/[0.02] overflow-hidden">
             {/* Animated dots background with connecting lines */}
             <div className="absolute inset-0 opacity-70">
               {/* SVG for connecting lines */}
@@ -155,16 +135,12 @@ export function InfrastructureSection() {
 
           {/* Stacked stat cards */}
           <div className="flex flex-col gap-6">
-            <div className={`p-8 border border-foreground/10 bg-foreground/[0.02] transition-all duration-700 delay-100 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}>
+            <div data-reveal className="p-8 border border-foreground/10 bg-foreground/[0.02]">
               <span className="text-5xl lg:text-6xl font-display">24</span>
               <span className="block text-sm text-muted-foreground mt-2">Tools & platforms hands-on</span>
             </div>
 
-            <div className={`p-8 border border-foreground/10 bg-foreground/[0.02] transition-all duration-700 delay-200 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}>
+            <div data-reveal className="p-8 border border-foreground/10 bg-foreground/[0.02]">
               <span className="text-5xl lg:text-6xl font-display">2</span>
               <span className="block text-sm text-muted-foreground mt-2">Internships completed</span>
             </div>
@@ -172,9 +148,7 @@ export function InfrastructureSection() {
         </div>
 
         {/* Region list */}
-        <div className={`mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-1000 delay-300 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <div data-reveal className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
           {regions.map((region, index) => (
             <div
               key={region.name}

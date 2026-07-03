@@ -2,6 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
 
 const footerLinks = {
   Explore: [
@@ -91,11 +92,36 @@ function AnimatedWaveCanvas() {
 }
 
 export function FooterSection() {
+  const footerRef = useRef<HTMLElement>(null);
+  const bannerImageRef = useRef<HTMLImageElement>(null);
+
+  // Subtle scrub parallax on the panoramic banner image
+  useEffect(() => {
+    const img = bannerImageRef.current;
+    const footer = footerRef.current;
+    if (!img || !footer) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(img, {
+        yPercent: -8,
+        ease: "none",
+        scrollTrigger: {
+          trigger: footer,
+          scrub: true,
+        },
+      });
+    }, footer);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <footer className="relative bg-black">
+    <footer ref={footerRef} className="relative bg-black">
       {/* Panoramic banner image */}
       <div className="relative w-full h-[340px] md:h-[420px] overflow-hidden">
         <img
+          ref={bannerImageRef}
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Upscaled%20Image%20%2810%29-UnDKstODkIENp5xqTYUEpt0Sm8tNOw.png"
           alt="Bioluminescent landscape"
           className="w-full h-full object-cover object-center"

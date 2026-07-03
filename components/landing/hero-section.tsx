@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { HeroWebglLayer } from "@/components/motion/hero-webgl-layer";
+import { gsap } from "@/lib/gsap";
 
 const words = ["detection", "triage", "investigation", "response"];
 
@@ -151,11 +153,36 @@ function BlurWord({ word, trigger }: { word: string; trigger: number }) {
 }
 
 export function HeroSection() {
-  const [isVisible, setIsVisible] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
+  const eyebrowRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setIsVisible(true);
+  // Mount entrance: eyebrow -> headline -> CTA row -> stats, fade+rise.
+  useLayoutEffect(() => {
+    const targets: HTMLElement[] = [
+      eyebrowRef.current,
+      headlineRef.current,
+      ctaRef.current,
+      statsRef.current,
+    ].filter(Boolean) as HTMLElement[];
+    if (!targets.length) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set(targets, { y: 24, opacity: 0 });
+      gsap.to(targets, {
+        y: 0,
+        opacity: 1,
+        duration: 0.9,
+        ease: "power3.out",
+        stagger: 0.15,
+      });
+    });
+
+    return () => ctx.revert();
   }, []);
 
   useEffect(() => {
@@ -179,6 +206,8 @@ export function HeroSection() {
         >
           <source src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bg-hero-0BnFGdr81Ifnj3WbBZoNt1KE4D5DMT.mp4" type="video/mp4" />
         </video>
+        {/* Original WebGL mist + pointer glow layer */}
+        <HeroWebglLayer />
         {/* Subtle overlay to ensure text readability on the left */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
@@ -213,23 +242,18 @@ export function HeroSection() {
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-12 py-32 lg:py-40">
         <div className="lg:max-w-[55%]">
         {/* Eyebrow */}
-        <div 
-          className={`mb-8 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
+        <div ref={eyebrowRef} className="mb-8">
           <span className="inline-flex items-center gap-3 text-sm font-mono text-white/60">
             <span className="w-8 h-px bg-white/30" />
             Security Engineer Fresher — SOC / Blue Team
           </span>
         </div>
-        
+
         {/* Main headline */}
         <div className="mb-12">
-          <h1 
-            className={`text-left text-[clamp(2rem,6vw,7rem)] font-display leading-[0.92] tracking-tight text-white transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
+          <h1
+            ref={headlineRef}
+            className="text-left text-[clamp(2rem,6vw,7rem)] font-display leading-[0.92] tracking-tight text-white"
           >
             <span className="block whitespace-normal sm:whitespace-nowrap">Blue Team mindset,</span>
             <span className="block whitespace-normal sm:whitespace-nowrap">
@@ -242,11 +266,7 @@ export function HeroSection() {
         </div>
 
         {/* CTA buttons */}
-        <div
-          className={`flex flex-wrap items-center gap-4 transition-all duration-1000 delay-300 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
+        <div ref={ctaRef} className="flex flex-wrap items-center gap-4">
           <MagneticButton href="/projects/barracuda" variant="primary">
             View projects
           </MagneticButton>
@@ -256,13 +276,9 @@ export function HeroSection() {
         </div>
         </div>
       </div>
-      
+
       {/* Stats — 3 metrics static, no auto-scroll */}
-      <div 
-        className={`absolute bottom-12 left-0 right-0 px-6 lg:px-12 transition-all duration-700 delay-500 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-      >
+      <div ref={statsRef} className="absolute bottom-12 left-0 right-0 px-6 lg:px-12">
         <div className="max-w-[1400px] mx-auto flex items-start gap-10 lg:gap-20">
           {[
             { value: "SOC", label: "readiness mode" },

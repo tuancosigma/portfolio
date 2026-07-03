@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { SplitReveal } from "@/components/motion/split-reveal";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const metrics = [
   {
@@ -218,24 +220,13 @@ function DotGraph({
 
 export function MetricsSection() {
   const [time, setTime] = useState<Date | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  useSectionReveal(sectionRef);
 
   useEffect(() => {
     setTime(new Date());
     const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
   }, []);
 
   return (
@@ -256,20 +247,16 @@ export function MetricsSection() {
               </span>
             </div>
 
-            <h2 className={`text-6xl md:text-7xl lg:text-[140px] font-display tracking-tight leading-[0.95] transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}>
-              Career
+            <h2 className="text-6xl md:text-7xl lg:text-[140px] font-display tracking-tight leading-[0.95]">
+              <SplitReveal>Career</SplitReveal>
               <br />
-              <span className="text-muted-foreground">at a glance.</span>
+              <SplitReveal className="text-muted-foreground" delay={0.1}>at a glance.</SplitReveal>
             </h2>
           </div>
         </div>
 
         {/* Organic graph image */}
-        <div className={`w-full mb-0 transition-all duration-1000 delay-200 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <div data-reveal className="w-full mb-0">
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/real-time-graph-INFmn3u0MlUwvNPynoIhwxtPaPjxM5.png"
             alt=""
@@ -281,9 +268,7 @@ export function MetricsSection() {
         {/* Metrics grid */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Large metric */}
-          <div className={`lg:col-span-1 bg-foreground/[0.02] border border-foreground/10 p-10 lg:p-14 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-          }`}>
+          <div data-reveal className="lg:col-span-1 bg-foreground/[0.02] border border-foreground/10 p-10 lg:p-14">
             <div className="text-4xl md:text-5xl lg:text-6xl font-display tracking-tight mb-4 whitespace-nowrap overflow-hidden">
               <AnimatedNumber end={metrics[0].value} suffix={metrics[0].suffix} prefix={metrics[0].prefix} />
             </div>
@@ -298,10 +283,8 @@ export function MetricsSection() {
           {metrics.slice(1).map((metric, index) => (
             <div
               key={metric.label}
-              className={`bg-foreground/[0.02] border border-foreground/10 p-8 flex flex-col items-start justify-between gap-6 transition-all duration-700 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-              }`}
-              style={{ transitionDelay: `${(index + 1) * 100}ms` }}
+              data-reveal
+              className="bg-foreground/[0.02] border border-foreground/10 p-8 flex flex-col items-start justify-between gap-6"
             >
               <div className="w-full">
                 <div className="text-sm text-muted-foreground font-mono mb-2">{metric.sublabel}</div>
@@ -325,9 +308,7 @@ export function MetricsSection() {
         </div>
 
         {/* Bottom ticker */}
-        <div className={`mt-16 pt-8 border-t border-foreground/10 flex flex-wrap items-center gap-x-12 gap-y-4 text-sm font-mono text-muted-foreground transition-all duration-1000 delay-500 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}>
+        <div data-reveal className="mt-16 pt-8 border-t border-foreground/10 flex flex-wrap items-center gap-x-12 gap-y-4 text-sm font-mono text-muted-foreground">
           <span>Wazuh</span>
           <span>pfSense</span>
           <span>Barracuda WAF</span>

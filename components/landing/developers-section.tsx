@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { gsap } from "@/lib/gsap";
+import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
 const features = [
   {
@@ -26,31 +28,38 @@ const features = [
 ];
 
 export function DevelopersSection() {
-  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const bgImageRef = useRef<HTMLImageElement>(null);
+  useSectionReveal(sectionRef);
 
+  // Subtle scrub parallax on the background photo
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
+    const img = bgImageRef.current;
+    const section = sectionRef.current;
+    if (!img || !section) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    const ctx = gsap.context(() => {
+      gsap.to(img, {
+        yPercent: -8,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          scrub: true,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <section id="developers" ref={sectionRef} className="relative py-24 lg:py-32 overflow-hidden">
 
       {/* Image — absolute, bottom-right, behind all content */}
-      <div
-        className={`absolute bottom-0 right-0 w-[55%] h-[85%] pointer-events-none transition-all duration-1000 delay-300 opacity-20 ${
-          isVisible ? "lg:opacity-100" : "lg:opacity-0"
-        }`}
-      >
+      <div className="absolute bottom-0 right-0 w-[55%] h-[85%] pointer-events-none opacity-20 lg:opacity-100">
         <img
+          ref={bgImageRef}
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Upscaled%20Image%20%2813%29-OQ2DiR3ElVsUg8kTvTL1kC5A3Q6maM.png"
           alt=""
           aria-hidden="true"
@@ -65,11 +74,7 @@ export function DevelopersSection() {
       {/* All text content sits on top */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         {/* Header — Full width */}
-        <div
-          className={`mb-16 transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
+        <div data-reveal className="mb-16">
           <span className="inline-flex items-center gap-3 text-sm font-mono text-muted-foreground mb-6">
             <span className="w-8 h-px bg-foreground/30" />
             Experience &amp; Projects
@@ -82,11 +87,7 @@ export function DevelopersSection() {
         </div>
 
         {/* Description + Features — left half only */}
-        <div
-          className={`max-w-full lg:max-w-[50%] transition-all duration-700 delay-100 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
+        <div data-reveal className="max-w-full lg:max-w-[50%]">
           <p className="text-xl text-muted-foreground mb-12 leading-relaxed max-w-md">
             I can support Tier 1 monitoring, first-pass alert validation, firewall/WAF evidence review, clear incident notes, and small Python scripts that make repetitive checks easier to repeat.
           </p>
@@ -104,17 +105,14 @@ export function DevelopersSection() {
                 </>
               );
 
-              const className = `group transition-all duration-500 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              } ${feature.href ? "hover:opacity-70" : ""}`;
-              const style = { transitionDelay: `${index * 50 + 200}ms` };
+              const className = `group ${feature.href ? "hover:opacity-70" : ""}`;
 
               return feature.href ? (
-                <Link key={feature.title} href={feature.href} className={className} style={style}>
+                <Link key={feature.title} href={feature.href} className={className}>
                   {content}
                 </Link>
               ) : (
-                <div key={feature.title} className={className} style={style}>
+                <div key={feature.title} className={className}>
                   {content}
                 </div>
               );

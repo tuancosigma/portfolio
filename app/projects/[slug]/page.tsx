@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Navigation } from "@/components/landing/navigation";
 import { FooterSection } from "@/components/landing/footer-section";
+import { DepthImage } from "@/components/motion/depth-image";
 import { projects, getProject } from "@/lib/projects-data";
 import type { Metadata } from "next";
 
@@ -38,15 +39,16 @@ export default async function ProjectPage({
       <Navigation />
 
       <section className="relative pt-40 pb-24 lg:pt-48 lg:pb-32 bg-foreground text-background overflow-hidden">
-        {/* Project artwork — right side, fades under the text */}
+        {/* Project artwork — interactive depth-parallax, fades under the text */}
         <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] pointer-events-none">
-          <img
-            src={project.image}
+          <DepthImage
+            src={project.photo}
+            depthSrc={project.depthMap}
             alt={project.imageAlt}
-            className="w-full h-full object-cover object-center opacity-70"
+            className="w-full h-full opacity-80 pointer-events-auto"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground via-transparent to-transparent pointer-events-none" />
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
