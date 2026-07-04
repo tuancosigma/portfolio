@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { useSectionReveal } from "@/components/motion/use-section-reveal";
 
@@ -131,7 +131,6 @@ function ParticleVisualization() {
 }
 
 export function FeaturesSection() {
-  const [activeFeature, setActiveFeature] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   useSectionReveal(sectionRef);
 
@@ -170,7 +169,6 @@ export function FeaturesSection() {
           <div
             data-reveal
             className="lg:col-span-12 relative bg-black border border-foreground/10 min-h-[500px] overflow-hidden group flex"
-            onMouseEnter={() => setActiveFeature(0)}
           >
             {/* Left: text content */}
             <div className="relative flex-1 p-8 lg:p-12 bg-black">

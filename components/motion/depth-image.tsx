@@ -153,6 +153,8 @@ export function DepthImage({ src, depthSrc, alt, className }: DepthImageProps) {
         container.removeEventListener("pointerleave", onLeave);
       };
       (container as HTMLDivElement & { _dispose?: () => void })._dispose = cleanup;
+    }).catch(() => {
+      // Texture failed to load — the static <img> fallback stays visible.
     });
 
     return () => {
