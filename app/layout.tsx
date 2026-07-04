@@ -2,6 +2,7 @@ import React from "react"
 import type { Metadata } from 'next'
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import { CommandPalette } from '@/components/command-palette'
+import { ChatWidget } from '@/components/chat-widget'
 import { ScrollProgress } from '@/components/landing/scroll-progress'
 import { SmoothScrollProvider } from '@/components/motion/smooth-scroll-provider'
 import './globals.css'
@@ -60,6 +61,7 @@ export default function RootLayout({
           <ScrollProgress />
           {children}
           <CommandPalette />
+          <ChatWidget />
         </SmoothScrollProvider>
       </body>
     </html>

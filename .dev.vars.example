@@ -1,0 +1,10 @@
+# Copy this file to .dev.vars (already gitignored) and fill in real keys for local dev.
+# Production keys live in Cloudflare Workers Secrets — never commit real values here.
+
+GROQ_API_KEY=
+GROQ_API_KEY_BACKUP=
+GROQ_MODEL=llama-3.3-70b-versatile
+
+GEMINI_API_KEY=
+GEMINI_API_KEY_BACKUP=
+GEMINI_MODEL=gemini-2.5-flash

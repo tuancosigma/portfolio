@@ -25,6 +25,7 @@ import {
   Linkedin,
   FileText,
   FolderGit2,
+  MessageCircle,
 } from "lucide-react";
 
 export function CommandPalette() {
@@ -115,6 +116,14 @@ export function CommandPalette() {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Contact">
+          <CommandItem
+            onSelect={() => {
+              setOpen(false);
+              window.dispatchEvent(new Event("open-chat-widget"));
+            }}
+          >
+            <MessageCircle /> Ask AI
+          </CommandItem>
           <CommandItem onSelect={() => go("mailto:tinyly90891@gmail.com")}>
             <Mail /> Email me
             <CommandShortcut>tinyly90891@gmail.com</CommandShortcut>
