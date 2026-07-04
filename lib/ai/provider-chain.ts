@@ -11,9 +11,6 @@ interface Attempt {
 
 const RETRYABLE_STATUS = new Set([401, 403, 429, 500, 502, 503, 504]);
 const REQUEST_TIMEOUT_MS = 10_000;
-// Groq's SSE connection can idle-hang past its final chunk under some
-// runtimes; bound each read so a stalled upstream can't hang the response.
-const READ_IDLE_TIMEOUT_MS = 12_000;
 
 const FALLBACK_TEXT =
   "The AI assistant is temporarily unavailable. Please reach out directly at tinyly90891@gmail.com.";
@@ -63,7 +60,14 @@ function fallbackStream(): ReadableStream<Uint8Array> {
   return textStream(FALLBACK_TEXT);
 }
 
-function fetchGroq(attempt: Attempt, systemPrompt: string, messages: ChatMessage[]) {
+// Both providers use their non-streaming, single-JSON-response endpoint.
+// A real Cloudflare Workers deployment killed the request ("runtime canceled
+// this request because it detected that your Worker's code had hung") on the
+// Groq streaming path — workerd's ReadableStream/ TextDecoderStream behavior
+// didn't match what worked under local `next dev` (Node). Non-streaming
+// avoids that whole class of runtime-dependent hang for both providers;
+// `textStream()` still gives the widget a lightweight typing effect client-side.
+function fetchGroqOnce(attempt: Attempt, systemPrompt: string, messages: ChatMessage[]) {
   return fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -72,7 +76,7 @@ function fetchGroq(attempt: Attempt, systemPrompt: string, messages: ChatMessage
     },
     body: JSON.stringify({
       model: attempt.model,
-      stream: true,
+      stream: false,
       max_tokens: 512,
       messages: [{ role: "system", content: systemPrompt }, ...messages],
     }),
@@ -80,9 +84,6 @@ function fetchGroq(attempt: Attempt, systemPrompt: string, messages: ChatMessage
   });
 }
 
-// Gemini fallback uses the non-streaming endpoint deliberately: it's the
-// last-resort path (low free-tier quota), and avoiding a second streaming
-// format sidesteps SSE-framing edge cases for a rarely-hit code path (KISS).
 function fetchGeminiOnce(attempt: Attempt, systemPrompt: string, messages: ChatMessage[]) {
   const contents = messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
@@ -104,82 +105,13 @@ function fetchGeminiOnce(attempt: Attempt, systemPrompt: string, messages: ChatM
   );
 }
 
-/** Races a promise against a timeout; resolves to a sentinel instead of rejecting. */
-function withIdleTimeout<T>(promise: Promise<T>, ms: number): Promise<T | "timeout"> {
-  return new Promise((resolve) => {
-    const timer = setTimeout(() => resolve("timeout"), ms);
-    promise.then(
-      (v) => {
-        clearTimeout(timer);
-        resolve(v);
-      },
-      () => {
-        clearTimeout(timer);
-        resolve("timeout");
-      }
-    );
-  });
-}
-
-/** Re-emits Groq's OpenAI-format SSE body as our own `{t: text}` chunk protocol. */
-function normalizeGroqStream(body: ReadableStream<Uint8Array>): ReadableStream<Uint8Array> {
-  // Cast: lib.dom's TextDecoderStream types its writable side as BufferSource,
-  // which TS won't structurally match to ReadableStream<Uint8Array> — safe at
-  // runtime since Uint8Array satisfies BufferSource.
-  const reader = body
-    .pipeThrough(new TextDecoderStream() as unknown as ReadableWritablePair<string, Uint8Array>)
-    .getReader();
-  let buffer = "";
-
-  const extractText = (payload: string): string | undefined => {
-    if (payload === "[DONE]") return undefined;
-    try {
-      return JSON.parse(payload).choices?.[0]?.delta?.content;
-    } catch {
-      return undefined; // partial/keep-alive line split across reads
-    }
-  };
-
-  const flushBuffer = (controller: ReadableStreamDefaultController<Uint8Array>) => {
-    const line = buffer.split("\n").find((l) => l.startsWith("data: "));
-    const text = line && extractText(line.slice(6).trim());
-    if (text) controller.enqueue(encodeChunk(text));
-    buffer = "";
-  };
-
-  return new ReadableStream<Uint8Array>({
-    async pull(controller) {
-      const result = await withIdleTimeout(reader.read(), READ_IDLE_TIMEOUT_MS);
-
-      if (result === "timeout" || result.done) {
-        flushBuffer(controller);
-        controller.enqueue(DONE_EVENT);
-        controller.close();
-        reader.cancel().catch(() => {});
-        return;
-      }
-
-      buffer += result.value;
-      const events = buffer.split("\n\n");
-      buffer = events.pop() ?? "";
-
-      for (const event of events) {
-        const line = event.split("\n").find((l) => l.startsWith("data: "));
-        if (!line) continue;
-        const text = extractText(line.slice(6).trim());
-        if (text) controller.enqueue(encodeChunk(text));
-      }
-    },
-  });
-}
-
 /**
- * Tries Groq (primary + backup keys, streamed) then Gemini (primary + backup
- * keys, single-shot) in order. A retryable status (auth/rate-limit/server
- * error) or network error moves to the next attempt. A non-retryable status
- * stops the chain — it signals a request-shape problem that would fail
- * identically everywhere. All attempts exhausted or a non-retryable failure
- * both resolve to a graceful fallback message rather than a hard error.
+ * Tries Groq (primary + backup keys) then Gemini (primary + backup keys) in
+ * order, both single-shot JSON completions. A retryable status (auth/rate-
+ * limit/server error) or network error moves to the next attempt. A non-
+ * retryable status stops the chain — it signals a request-shape problem that
+ * would fail identically everywhere. All attempts exhausted or a non-
+ * retryable failure both resolve to a graceful fallback message.
  */
 export async function callWithFallback(
   systemPrompt: string,
@@ -187,18 +119,20 @@ export async function callWithFallback(
 ): Promise<ReadableStream<Uint8Array>> {
   for (const attempt of buildAttempts()) {
     try {
-      if (attempt.provider === "groq") {
-        const res = await fetchGroq(attempt, systemPrompt, messages);
-        if (res.ok && res.body) return normalizeGroqStream(res.body);
-        if (!RETRYABLE_STATUS.has(res.status)) break;
-      }
+      const res =
+        attempt.provider === "groq"
+          ? await fetchGroqOnce(attempt, systemPrompt, messages)
+          : await fetchGeminiOnce(attempt, systemPrompt, messages);
 
-      const res = await fetchGeminiOnce(attempt, systemPrompt, messages);
       if (res.ok) {
         const json = (await res.json()) as {
+          choices?: { message?: { content?: string } }[];
           candidates?: { content?: { parts?: { text?: string }[] } }[];
         };
-        const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+        const text =
+          attempt.provider === "groq"
+            ? json.choices?.[0]?.message?.content
+            : json.candidates?.[0]?.content?.parts?.[0]?.text;
         if (text) return textStream(text);
         break; // 200 with an unexpected shape won't fix itself on retry
       }
