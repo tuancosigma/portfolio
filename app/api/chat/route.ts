@@ -1,4 +1,4 @@
-import { callWithFallback, type ChatMessage } from "@/lib/ai/provider-chain";
+import { getReply, type ChatMessage } from "@/lib/ai/provider-chain";
 import { SYSTEM_PROMPT } from "@/lib/ai/system-prompt";
 
 const MAX_HISTORY = 6;
@@ -17,7 +17,7 @@ function isValidRawMessage(m: unknown): m is { role: string; content: string } {
 }
 
 // Validates AND strips to exactly {role, content} — extra fields on a message
-// object (e.g. a large hidden property) must never reach the outstream
+// object (e.g. a large hidden property) must never reach the outbound
 // provider payload unbounded by the length check above.
 function sanitizeMessages(value: unknown): ChatMessage[] | null {
   if (!Array.isArray(value) || value.length === 0 || value.length > MAX_HISTORY) return null;
@@ -40,13 +40,6 @@ export async function POST(req: Request) {
     });
   }
 
-  const stream = await callWithFallback(SYSTEM_PROMPT, messages);
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    },
-  });
+  const reply = await getReply(SYSTEM_PROMPT, messages);
+  return Response.json({ reply });
 }

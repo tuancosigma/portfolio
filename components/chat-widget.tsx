@@ -11,6 +11,7 @@ interface Message {
 
 const MAX_INPUT_LENGTH = 500;
 const MAX_HISTORY = 6;
+const TYPE_CHUNK_MS = 18; // client-side reveal speed (per word), purely cosmetic
 
 const SUGGESTED_PROMPTS = [
   "What's Tuan's SOC experience?",
@@ -18,39 +19,20 @@ const SUGGESTED_PROMPTS = [
   "How can I contact him?",
 ];
 
-/** Parses one SSE chunk of our own `{t: text}` protocol and appends deltas to the streaming callback. */
-async function streamChat(messages: Message[], onDelta: (text: string) => void) {
+/** Fetches the full reply, then reveals it word by word for a lightweight typing effect. */
+async function fetchReply(messages: Message[], onWord: (soFar: string) => void) {
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages: messages.slice(-MAX_HISTORY) }),
   });
 
-  const reader = res.body?.getReader();
-  if (!reader) return;
-  const decoder = new TextDecoder();
-  let buffer = "";
+  const data = (await res.json()) as { reply?: string };
+  const words = (data.reply ?? "").split(" ");
 
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-
-    const events = buffer.split("\n\n");
-    buffer = events.pop() ?? "";
-
-    for (const event of events) {
-      const line = event.split("\n").find((l) => l.startsWith("data: "));
-      if (!line) continue;
-      const payload = line.slice(6).trim();
-      if (payload === "[DONE]") continue;
-      try {
-        const json = JSON.parse(payload);
-        if (json.t) onDelta(json.t);
-      } catch {
-        // malformed/partial chunk — ignore
-      }
-    }
+  for (let i = 0; i < words.length; i++) {
+    onWord(words.slice(0, i + 1).join(" "));
+    if (i < words.length - 1) await new Promise((r) => setTimeout(r, TYPE_CHUNK_MS));
   }
 }
 
@@ -81,11 +63,10 @@ export function ChatWidget() {
     setIsStreaming(true);
 
     try {
-      await streamChat(nextMessages, (delta) => {
+      await fetchReply(nextMessages, (soFar) => {
         setMessages((prev) => {
           const updated = [...prev];
-          const last = updated[updated.length - 1];
-          updated[updated.length - 1] = { ...last, content: last.content + delta };
+          updated[updated.length - 1] = { role: "assistant", content: soFar };
           return updated;
         });
       });

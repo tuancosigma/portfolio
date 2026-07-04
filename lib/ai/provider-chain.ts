@@ -12,7 +12,7 @@ interface Attempt {
 const RETRYABLE_STATUS = new Set([401, 403, 429, 500, 502, 503, 504]);
 const REQUEST_TIMEOUT_MS = 10_000;
 
-const FALLBACK_TEXT =
+export const FALLBACK_TEXT =
   "The AI assistant is temporarily unavailable. Please reach out directly at tinyly90891@gmail.com.";
 
 function splitCsv(value: string | undefined): string[] {
@@ -39,34 +39,6 @@ function buildAttempts(): Attempt[] {
   ];
 }
 
-function encodeChunk(text: string): Uint8Array {
-  return new TextEncoder().encode(`data: ${JSON.stringify({ t: text })}\n\n`);
-}
-
-const DONE_EVENT = new TextEncoder().encode("data: [DONE]\n\n");
-
-/** Emits a complete string as a few word-chunks (light typing effect) then DONE. */
-function textStream(text: string): ReadableStream<Uint8Array> {
-  return new ReadableStream({
-    start(controller) {
-      for (const word of text.split(" ")) controller.enqueue(encodeChunk(word + " "));
-      controller.enqueue(DONE_EVENT);
-      controller.close();
-    },
-  });
-}
-
-function fallbackStream(): ReadableStream<Uint8Array> {
-  return textStream(FALLBACK_TEXT);
-}
-
-// Both providers use their non-streaming, single-JSON-response endpoint.
-// A real Cloudflare Workers deployment killed the request ("runtime canceled
-// this request because it detected that your Worker's code had hung") on the
-// Groq streaming path — workerd's ReadableStream/ TextDecoderStream behavior
-// didn't match what worked under local `next dev` (Node). Non-streaming
-// avoids that whole class of runtime-dependent hang for both providers;
-// `textStream()` still gives the widget a lightweight typing effect client-side.
 function fetchGroqOnce(attempt: Attempt, systemPrompt: string, messages: ChatMessage[]) {
   return fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -110,13 +82,15 @@ function fetchGeminiOnce(attempt: Attempt, systemPrompt: string, messages: ChatM
  * order, both single-shot JSON completions. A retryable status (auth/rate-
  * limit/server error) or network error moves to the next attempt. A non-
  * retryable status stops the chain — it signals a request-shape problem that
- * would fail identically everywhere. All attempts exhausted or a non-
- * retryable failure both resolve to a graceful fallback message.
+ * would fail identically everywhere. Returns FALLBACK_TEXT if every attempt
+ * fails, rather than throwing, so the route always has a reply to send.
+ *
+ * Returns a plain string (not a stream): both providers are single-shot, and
+ * a hand-rolled ReadableStream/TextEncoder response body was found to mangle
+ * multi-byte UTF-8 (Vietnamese diacritics) under `next dev`'s Node runtime —
+ * `Response.json()` on a plain string encodes UTF-8 correctly everywhere.
  */
-export async function callWithFallback(
-  systemPrompt: string,
-  messages: ChatMessage[]
-): Promise<ReadableStream<Uint8Array>> {
+export async function getReply(systemPrompt: string, messages: ChatMessage[]): Promise<string> {
   for (const attempt of buildAttempts()) {
     try {
       const res =
@@ -133,7 +107,7 @@ export async function callWithFallback(
           attempt.provider === "groq"
             ? json.choices?.[0]?.message?.content
             : json.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return textStream(text);
+        if (text) return text;
         break; // 200 with an unexpected shape won't fix itself on retry
       }
       if (!RETRYABLE_STATUS.has(res.status)) break;
@@ -142,5 +116,5 @@ export async function callWithFallback(
     }
   }
 
-  return fallbackStream();
+  return FALLBACK_TEXT;
 }
